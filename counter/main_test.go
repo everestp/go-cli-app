@@ -2,8 +2,6 @@ package main
 
 import (
 	"testing"
-
-	"github.com/go-rod/rod/lib/input"
 )
 
 func TestCountWord(t *testing.T) {
@@ -23,6 +21,11 @@ func TestCountWord(t *testing.T) {
 			name:  "empty input ",
 			input: "",
 			wants: 0,
+		},
+		{
+			name:  "Prefixed multiple spaces",
+			input: "hello   ",
+			wants: 1,
 		},
 	}
 
