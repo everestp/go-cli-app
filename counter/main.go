@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"unicode"
 )
 
 func main() {
-	filename := "./lot.txt"
+	filename := "./words.txt"
 	log.SetFlags(0)
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatalln("failed to read file :", err)
 	}
-	PrintFileContent(file)
+	wordCount := CountWordInFiles(file)
+	fmt.Println(wordCount)
 }
 
 func CountWords(data []byte) int {
@@ -22,22 +24,26 @@ func CountWords(data []byte) int {
 	return len(words)
 }
 
-func PrintFileContent(file *os.File) {
-	const bufferSize = 4096
-	buffer := make([]byte, bufferSize)
+func CountWordInFiles(file *os.File) int {
 
-	totalSize := 0
+	wordCount := 0
+	isInsideWord := false
+	const bufferSize = 5
+	buffer := make([]byte, bufferSize)
 
 	for {
 		size, err := file.Read(buffer)
 		if err != nil {
 			break
 		}
-		totalSize += size
-
-		sunBuffer := buffer[:size]
-
-		fmt.Print(string(sunBuffer), totalSize)
+		isInsideWord = !unicode.IsSpace(rune(buffer[0])) && isInsideWord
+		bufferCount := CountWords(buffer[:size])
+		if isInsideWord {
+			bufferCount -= 1
+		}
+		wordCount += bufferCount
+		isInsideWord = !unicode.IsSpace(rune(buffer[size-1]))
 
 	}
+	return wordCount
 }
